@@ -2,6 +2,7 @@ package io.spaceandtime
 
 import org.apache.arrow.flight.FlightClient
 import org.apache.arrow.flight.Location
+import org.apache.arrow.flight.sql.FlightSqlClient
 import org.apache.arrow.memory.RootAllocator
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -23,13 +24,15 @@ class FlightSqlJdbcDriver : Driver {
         val user = props?.get("user") as String?
         val password = props?.get("password") as String?
         val allocator = RootAllocator()
+
         val client = FlightClient.builder()
             .allocator(allocator)
             .location(Location.forGrpcInsecure(uri.host, uri.port))
             .build()
         client.authenticateBasic(user, password)
+        val sqlClient = FlightSqlClient(client)
 
-        return FlightSqlConnection(client)
+        return FlightSqlConnection(sqlClient)
     }
 
     override fun acceptsURL(url: String?): Boolean {

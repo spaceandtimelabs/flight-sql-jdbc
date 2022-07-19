@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   dremio:
-    build: ..
+    build: .
     volumes:
       - ./dremio.conf:/opt/dremio/conf/dremio.conf
     ports:

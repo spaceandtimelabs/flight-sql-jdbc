@@ -1,12 +1,14 @@
 package io.spaceandtime
 
+import org.apache.arrow.flight.sql.FlightSqlClient
+import org.apache.arrow.vector.VarCharVector
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLWarning
 import java.sql.Statement
 
-class FlightSqlStatement : Statement {
+class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
     val log = LoggerFactory.getLogger(this.javaClass.name)
 
     override fun <T : Any?> unwrap(p0: Class<T>?): T {
@@ -86,7 +88,15 @@ class FlightSqlStatement : Statement {
     }
 
     override fun execute(sql: String?): Boolean {
-        TODO("Execute SQL: $sql") // Execute SQL: SELECT 'keep alive'
+        log.info("Execute SQL: $sql") // Execute SQL: SELECT 'keep alive'
+        val info = sqlClient.execute(sql)
+        val stream  = sqlClient.getStream(info.endpoints[0].ticket)
+        while(stream.next()) {
+            val vector = stream.root!!.fieldVectors[0] as VarCharVector
+            val value = String(vector[0])
+            log.info("Got response: $value")
+        }
+        return false
     }
 
     override fun execute(p0: String?, p1: Int): Boolean {
