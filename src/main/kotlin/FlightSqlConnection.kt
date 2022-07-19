@@ -19,15 +19,16 @@ class FlightSqlConnection : Connection {
     }
 
     override fun createStatement(): Statement {
-        TODO("Implement createStatement()")
+        log.info("createStatement()")
+        return FlightSqlStatement()
     }
 
     override fun createStatement(p0: Int, p1: Int): Statement {
-        TODO("Implement createStatement()")
+        TODO("Implement createStatement2()")
     }
 
     override fun createStatement(p0: Int, p1: Int, p2: Int): Statement {
-        TODO("Implement createStatement()")
+        TODO("Implement createStatement3()")
     }
 
     override fun prepareStatement(p0: String?): PreparedStatement {
