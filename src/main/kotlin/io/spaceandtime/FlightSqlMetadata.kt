@@ -1,10 +1,10 @@
+package io.spaceandtime
+
 import org.slf4j.LoggerFactory
-import java.net.URLClassLoader
 import java.sql.Connection
 import java.sql.DatabaseMetaData
 import java.sql.ResultSet
 import java.sql.RowIdLifetime
-import java.util.jar.Manifest
 
 
 class FlightSqlMetadata : DatabaseMetaData {
@@ -68,15 +68,7 @@ class FlightSqlMetadata : DatabaseMetaData {
 
     override fun getDriverVersion(): String {
         log.info("getDriverVersion()")
-        
-        val loader = this.javaClass::class.java.getClassLoader() as URLClassLoader
-        val url = loader.findResource("META-INF/MANIFEST.MF")
-        val manifest = Manifest(url.openStream())
-        val attr = manifest.getMainAttributes()
-        val version = attr.getValue("Implementation-Version")
-        log.info("Got version {}", version)
-
-        return version
+        return FlightSqlJdbcDriver.getVersion()
     }
 
     override fun getDriverMajorVersion(): Int {

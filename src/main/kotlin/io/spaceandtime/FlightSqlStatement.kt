@@ -1,3 +1,5 @@
+package io.spaceandtime
+
 import org.slf4j.LoggerFactory
 import java.sql.Connection
 import java.sql.ResultSet

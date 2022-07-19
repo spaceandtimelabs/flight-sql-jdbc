@@ -1,9 +1,12 @@
+package io.spaceandtime
+
+import org.apache.arrow.flight.FlightClient
 import org.slf4j.LoggerFactory
 import java.sql.*
 import java.util.*
 import java.util.concurrent.Executor
 
-class FlightSqlConnection : Connection {
+class FlightSqlConnection(client: FlightClient) : Connection {
     val log = LoggerFactory.getLogger(this.javaClass.name)
 
     override fun <T : Any?> unwrap(p0: Class<T>?): T {
