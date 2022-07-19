@@ -11,7 +11,7 @@ class FlightSqlJdbcDriverTests {
 
         val url = "flightsql://127.0.0.1:32010"
         val user = "dremio"
-        val password = "dremio11"
+        val password = "dremio123"
         val con = DriverManager.getConnection(url, user, password)
 
         assertNotNull(con, "Expected a Connection object")

@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  dremio:
+    build: ..
+    volumes:
+      - ./dremio.conf:/opt/dremio/conf/dremio.conf
+    ports:
+      - "9047:9047"
+      - "31010:31010"
+      - "32010:32010"
+      - "45678:45678"
