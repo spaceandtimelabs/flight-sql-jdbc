@@ -55,7 +55,8 @@ class FlightSqlMetadata : DatabaseMetaData {
     }
 
     override fun getDatabaseProductName(): String {
-        TODO("Implement getDatabaseProductName()")
+        log.info("getDatabaseProductName()")
+        return "Apache Arrow Flight SQL JDBC Driver"
     }
 
     override fun getDatabaseProductVersion(): String {
@@ -63,6 +64,7 @@ class FlightSqlMetadata : DatabaseMetaData {
     }
 
     override fun getDriverName(): String {
+        log.info("getDriverName()")
         return "Apache Arrow Flight SQL JDBC Driver"
     }
 

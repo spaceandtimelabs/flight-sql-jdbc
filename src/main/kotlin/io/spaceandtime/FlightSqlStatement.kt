@@ -13,6 +13,8 @@ import java.sql.Statement
 
 class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
     val log = LoggerFactory.getLogger(this.javaClass.name)
+    var maxRowCount = 500
+    var _fetchSize = 500
 
     override fun <T : Any?> unwrap(p0: Class<T>?): T {
         TODO("Implement unwrap()")
@@ -26,8 +28,29 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
         TODO("Implement close()")
     }
 
-    override fun executeQuery(p0: String?): ResultSet {
-        TODO("Implement executeQuery1()")
+    override fun executeQuery(sql: String?): ResultSet {
+        log.info("executeQuery() $sql") 
+        val info = sqlClient.execute(sql)
+
+        val vals = mutableListOf<String>()
+        for(ep in info.endpoints) {
+            for(loc in ep.locations) {
+                val allocator = RootAllocator()
+                val client = FlightClient.builder()
+                    .allocator(allocator)
+                    .location(loc)
+                    .build()
+//        client.authenticateBasic(user, password)
+                val stream = client.getStream(ep.ticket)
+                while(stream.next()) {
+                    val vector = stream.root!!.fieldVectors[0] as VarCharVector
+                    val value = String(vector[0])
+                    vals.add(value)
+                }
+            }
+        }
+
+        return FlightSqlResultSet(vals)
     }
 
     override fun executeUpdate(p0: String?): Int {
@@ -55,11 +78,13 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
     }
 
     override fun getMaxRows(): Int {
-        TODO("Implement getMaxRows()")
+        log.info("getMaxRows()")
+        return maxRowCount
     }
 
-    override fun setMaxRows(p0: Int) {
-        TODO("Implement setMaxRows()")
+    override fun setMaxRows(count: Int) {
+        log.info("setMaxRows: $count")
+        maxRowCount = count
     }
 
     override fun setEscapeProcessing(p0: Boolean) {
@@ -111,7 +136,7 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
             }
         }
 
-        return false
+        return true
     }
 
     override fun execute(p0: String?, p1: Int): Boolean {
@@ -131,31 +156,35 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
     }
 
     override fun getUpdateCount(): Int {
-        TODO("Implement getUpdateCount()")
+        log.info("getUpdateCount()")
+        return -1
     }
 
     override fun getMoreResults(): Boolean {
-        TODO("Implement getMoreResults()")
+        log.info("setFetchSize()")
+        return false
     }
 
     override fun getMoreResults(p0: Int): Boolean {
-        TODO("Implement getMoreResults()")
+        TODO("Implement getMoreResults2(${p0})")
     }
 
     override fun setFetchDirection(p0: Int) {
-        TODO("Implement setFetchDirection()")
+        TODO("Implement setFetchDirection(${p0})")
     }
 
     override fun getFetchDirection(): Int {
         TODO("Implement getFetchDirection()")
     }
 
-    override fun setFetchSize(p0: Int) {
-        TODO("Implement setFetchSize()")
+    override fun setFetchSize(value: Int) {
+        log.info("setFetchSize() $value")
+        _fetchSize = value
     }
 
     override fun getFetchSize(): Int {
-        TODO("Implement getFetchSize()")
+        log.info("setFetchSize()")
+        return _fetchSize
     }
 
     override fun getResultSetConcurrency(): Int {

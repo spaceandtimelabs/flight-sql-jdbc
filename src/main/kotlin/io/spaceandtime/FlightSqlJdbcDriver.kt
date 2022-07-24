@@ -16,9 +16,11 @@ import java.util.logging.Logger
 
 class FlightSqlJdbcDriver : Driver {
     val log = LoggerFactory.getLogger(this.javaClass.name)
+    val nonStandardHeader = "jdbc:"
 
     override fun connect(url: String?, props: Properties?): Connection {
-        val uri = URI(url)
+        val realUrl = url!!.substring(nonStandardHeader.length)
+        val uri = URI(realUrl)
         log.info("connecting to ${uri.host}:${uri.port}") // 127.0.0.1:32010
 
         val user = props?.get("user") as String?
@@ -36,8 +38,11 @@ class FlightSqlJdbcDriver : Driver {
     }
 
     override fun acceptsURL(url: String?): Boolean {
-        val uri = URI(url)
-        return uri.scheme == "flightsql"
+        if(url == null) return false
+        if(!url!!.lowercase().startsWith(nonStandardHeader)) return false
+        val realUrl = url.substring(nonStandardHeader.length)
+        val uri = URI(realUrl)
+        return uri.scheme == "arrow-flight"
     }
 
     override fun getPropertyInfo(p0: String?, p1: Properties?): Array<DriverPropertyInfo> {
@@ -62,7 +67,7 @@ class FlightSqlJdbcDriver : Driver {
 
     companion object {
         fun getVersion(): String {
-            val loader = FlightSqlJdbcDriver.javaClass::class.java.getClassLoader() as URLClassLoader
+            val loader = FlightSqlJdbcDriver.javaClass.classLoader as URLClassLoader
             val url = loader.findResource("META-INF/MANIFEST.MF")
             val manifest = Manifest(url.openStream())
             val attr = manifest.getMainAttributes()

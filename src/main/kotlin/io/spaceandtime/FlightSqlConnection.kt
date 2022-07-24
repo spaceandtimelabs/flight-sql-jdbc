@@ -1,6 +1,5 @@
 package io.spaceandtime
 
-import org.apache.arrow.flight.FlightClient
 import org.apache.arrow.flight.sql.FlightSqlClient
 import org.slf4j.LoggerFactory
 import java.sql.*
@@ -80,7 +79,8 @@ class FlightSqlConnection(val sqlClient: FlightSqlClient) : Connection {
     }
 
     override fun getAutoCommit(): Boolean {
-        TODO("Implement getAutoCommit()")
+        log.info("getAutoCommit")
+        return true
     }
 
     override fun commit() {
@@ -101,8 +101,7 @@ class FlightSqlConnection(val sqlClient: FlightSqlClient) : Connection {
 
     override fun getMetaData(): DatabaseMetaData {
         log.info("getMetaData")
-        val md = FlightSqlMetadata()
-        return md
+        return FlightSqlMetadata()
     }
 
     override fun setReadOnly(p0: Boolean) {
@@ -126,11 +125,13 @@ class FlightSqlConnection(val sqlClient: FlightSqlClient) : Connection {
     }
 
     override fun getTransactionIsolation(): Int {
-        TODO("Implement getTransactionIsolation()")
+        log.info("getTransactionIsolation")
+        return Connection.TRANSACTION_READ_UNCOMMITTED
     }
 
-    override fun getWarnings(): SQLWarning {
-        return SQLWarning() // TODO: real impl
+    override fun getWarnings(): SQLWarning? {
+        log.info("getWarnings")
+        return null // TODO: real impl
     }
 
     override fun clearWarnings() {
