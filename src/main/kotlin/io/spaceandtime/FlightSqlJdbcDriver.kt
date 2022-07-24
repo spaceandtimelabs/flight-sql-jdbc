@@ -29,7 +29,7 @@ class FlightSqlJdbcDriver : Driver {
             .allocator(allocator)
             .location(Location.forGrpcInsecure(uri.host, uri.port))
             .build()
-        client.authenticateBasic(user, password)
+//        client.authenticateBasic(user, password)
         val sqlClient = FlightSqlClient(client)
 
         return FlightSqlConnection(sqlClient)

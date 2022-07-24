@@ -1,6 +1,9 @@
 package io.spaceandtime
 
+import org.apache.arrow.flight.FlightClient
+import org.apache.arrow.flight.Location
 import org.apache.arrow.flight.sql.FlightSqlClient
+import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.VarCharVector
 import org.slf4j.LoggerFactory
 import java.sql.Connection
@@ -90,12 +93,24 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
     override fun execute(sql: String?): Boolean {
         log.info("Execute SQL: $sql") // Execute SQL: SELECT 'keep alive'
         val info = sqlClient.execute(sql)
-        val stream  = sqlClient.getStream(info.endpoints[0].ticket)
-        while(stream.next()) {
-            val vector = stream.root!!.fieldVectors[0] as VarCharVector
-            val value = String(vector[0])
-            log.info("Got response: $value")
+
+        for(ep in info.endpoints) {
+            for(loc in ep.locations) {
+                val allocator = RootAllocator()
+                val client = FlightClient.builder()
+                    .allocator(allocator)
+                    .location(loc)
+                    .build()
+//        client.authenticateBasic(user, password)
+                val stream = client.getStream(ep.ticket)
+                while(stream.next()) {
+                    val vector = stream.root!!.fieldVectors[0] as VarCharVector
+                    val value = String(vector[0])
+                    log.info("Got response: $value")
+                }
+            }
         }
+
         return false
     }
 
