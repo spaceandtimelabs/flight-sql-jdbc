@@ -19,6 +19,7 @@ class FlightSqlStatement(
     val log = LoggerFactory.getLogger(this.javaClass.name)
     var maxRowCount = 500
     var _fetchSize = 500
+    val vals = mutableListOf<String>()
 
     override fun <T : Any?> unwrap(p0: Class<T>?): T {
         TODO("Implement unwrap()")
@@ -36,7 +37,6 @@ class FlightSqlStatement(
         log.info("executeQuery() $sql") 
         val info = sqlClient.execute(sql, token)
 
-        val vals = mutableListOf<String>()
         for(ep in info.endpoints) {
             for(loc in ep.locations) {
                 val allocator = RootAllocator()
@@ -136,6 +136,7 @@ class FlightSqlStatement(
                     val vector = stream.root!!.fieldVectors[0] as VarCharVector
                     val value = String(vector[0])
                     log.info("Got response: $value")
+                    vals.add(value)
                 }
             }
         }
@@ -156,7 +157,6 @@ class FlightSqlStatement(
     }
 
     override fun getResultSet(): ResultSet {
-        val vals = listOf<String>()
         return FlightSqlResultSet(vals)
     }
 

@@ -1,13 +1,11 @@
 package io.spaceandtime
 
-import org.apache.arrow.flight.sql.impl.FlightSql
 import org.junit.jupiter.api.Test
 import java.sql.DriverManager
-import java.util.Properties
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class FlightSqlStatementTests {
     @Test
@@ -21,6 +19,36 @@ class FlightSqlStatementTests {
         val stmt = con.createStatement()
         val actual = stmt.execute("SELECT 'keep alive'")
         assertEquals(actual, true, "select should return a row")
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testBallista() {
+        var sql = """create external table customer STORED AS CSV WITH HEADER ROW
+    LOCATION '/home/bgardner/workspace/ballista/arrow-datafusion/datafusion/core/tests/tpch-csv/customer.csv';
+"""
+        val url = "jdbc:arrow-flight://127.0.0.1:50050"
+        val driver = FlightSqlJdbcDriver()
+        val props = Properties()
+        props["user"] = "admin"
+        props["password"] = "password"
+        val con = driver.connect(url, props)
+        val stmt = con.createStatement()
+        var result = stmt.execute(sql)
+//        assertEquals(result, false)
+        val updateCount = stmt.updateCount
+//        assertEquals(updateCount, 0)
+        sql = "select top 1 c_name from customer order by c_name"
+        result = stmt.execute(sql)
+        assertEquals(result, true)
+        val rs = stmt.resultSet
+        var count = 0
+        while (rs.next()) {
+            val c_name = rs.getString(1)
+            assertEquals(c_name, "Customer#000000002")
+            count++
+        }
+        assertEquals(count, 1)
     }
 
     @Test

@@ -10,7 +10,9 @@ import java.sql.Array
 import java.sql.Date
 import java.util.*
 
-class FlightSqlResultSet(val vals: List<String>) : ResultSet {
+class FlightSqlResultSet(
+    val vals: List<String>
+) : ResultSet {
     val log = LoggerFactory.getLogger(this.javaClass.name)
     var cursorPos = -1
 
