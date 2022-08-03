@@ -2,6 +2,7 @@ package io.spaceandtime
 
 import org.apache.arrow.flight.FlightClient
 import org.apache.arrow.flight.Location
+import org.apache.arrow.flight.grpc.CredentialCallOption
 import org.apache.arrow.flight.sql.FlightSqlClient
 import org.apache.arrow.memory.RootAllocator
 import org.apache.arrow.vector.VarCharVector
@@ -11,7 +12,10 @@ import java.sql.ResultSet
 import java.sql.SQLWarning
 import java.sql.Statement
 
-class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
+class FlightSqlStatement(
+    val sqlClient: FlightSqlClient,
+    val token: CredentialCallOption
+) : Statement {
     val log = LoggerFactory.getLogger(this.javaClass.name)
     var maxRowCount = 500
     var _fetchSize = 500
@@ -30,7 +34,7 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
 
     override fun executeQuery(sql: String?): ResultSet {
         log.info("executeQuery() $sql") 
-        val info = sqlClient.execute(sql)
+        val info = sqlClient.execute(sql, token)
 
         val vals = mutableListOf<String>()
         for(ep in info.endpoints) {
@@ -117,7 +121,7 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
 
     override fun execute(sql: String?): Boolean {
         log.info("Execute SQL: $sql") // Execute SQL: SELECT 'keep alive'
-        val info = sqlClient.execute(sql)
+        val info = sqlClient.execute(sql, token)
 
         for(ep in info.endpoints) {
             for(loc in ep.locations) {
@@ -152,7 +156,8 @@ class FlightSqlStatement(val sqlClient: FlightSqlClient) : Statement {
     }
 
     override fun getResultSet(): ResultSet {
-        TODO("Implement getResultSet()")
+        val vals = listOf<String>()
+        return FlightSqlResultSet(vals)
     }
 
     override fun getUpdateCount(): Int {

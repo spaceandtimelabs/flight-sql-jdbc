@@ -8,13 +8,15 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class FlightSqlJdbcDriverTests {
+//    @Test
     fun `select should return a value`() {
         DriverManager.registerDriver(FlightSqlJdbcDriver())
 
+//        val url = "flightsql://127.0.0.1:50051" // FlightSql examples
         val url = "flightsql://127.0.0.1:50050" // ballista
 //        val url = "flightsql://127.0.0.1:32010" // dremio
-        val user = "dremio"
-        val password = "dremio123"
+        val user = "admin" //""dremio"
+        val password = "password" //"dremio123"
         val con = DriverManager.getConnection(url, user, password)
         val stmt = con.createStatement()
         val result = stmt.execute("SELECT 'keep alive'")

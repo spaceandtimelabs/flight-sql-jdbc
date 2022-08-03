@@ -14,7 +14,10 @@ class FlightSqlStatementTests {
     fun `should get version`() {
         val url = "jdbc:arrow-flight://127.0.0.1:50050"
         val driver = FlightSqlJdbcDriver()
-        val con = driver.connect(url, Properties())
+        val props = Properties()
+        props["user"] = "admin"
+        props["password"] = "password"
+        val con = driver.connect(url, props)
         val stmt = con.createStatement()
         val actual = stmt.execute("SELECT 'keep alive'")
         assertEquals(actual, true, "select should return a row")

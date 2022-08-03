@@ -31,10 +31,11 @@ class FlightSqlJdbcDriver : Driver {
             .allocator(allocator)
             .location(Location.forGrpcInsecure(uri.host, uri.port))
             .build()
+        val token = client.authenticateBasicToken(user, password).get()
 //        client.authenticateBasic(user, password)
         val sqlClient = FlightSqlClient(client)
 
-        return FlightSqlConnection(sqlClient)
+        return FlightSqlConnection(sqlClient, token)
     }
 
     override fun acceptsURL(url: String?): Boolean {
