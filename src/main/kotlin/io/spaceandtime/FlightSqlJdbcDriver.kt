@@ -6,7 +6,6 @@ import org.apache.arrow.flight.sql.FlightSqlClient
 import org.apache.arrow.memory.RootAllocator
 import org.slf4j.LoggerFactory
 import java.net.URI
-import java.net.URLClassLoader
 import java.sql.Connection
 import java.sql.Driver
 import java.sql.DriverPropertyInfo
@@ -68,12 +67,9 @@ class FlightSqlJdbcDriver : Driver {
 
     companion object {
         fun getVersion(): String {
-            val loader = FlightSqlJdbcDriver.javaClass.classLoader as URLClassLoader
-            val url = loader.findResource("META-INF/MANIFEST.MF")
-            val manifest = Manifest(url.openStream())
-            val attr = manifest.getMainAttributes()
-            val version = attr.getValue("Implementation-Version")
-            return version
+            FlightSqlJdbcDriver::class.java.classLoader.getResourceAsStream("META-INF/MANIFEST.MF").use {
+                return Manifest(it).mainAttributes.getValue("Implementation-Version")
+            }
         }
     }
 }

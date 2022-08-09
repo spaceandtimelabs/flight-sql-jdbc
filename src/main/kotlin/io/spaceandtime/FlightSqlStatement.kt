@@ -101,8 +101,7 @@ class FlightSqlStatement(
     }
 
     override fun setEscapeProcessing(p0: Boolean) {
-        log.info("setEscapeProcessing")
-        TODO("Implement setEscapeProcessing()")
+        log.info("setEscapeProcessing($p0)")
     }
 
     override fun getQueryTimeout(): Int {
@@ -136,8 +135,7 @@ class FlightSqlStatement(
     }
 
     override fun execute(sql: String?): Boolean {
-        log.info("execute")
-        log.info("Execute SQL: $sql") // Execute SQL: SELECT 'keep alive'
+        log.info("execute($sql)") // Execute SQL: SELECT 'keep alive'
         val info = sqlClient.execute(sql, token)
 
         for(ep in info.endpoints) {
@@ -162,21 +160,21 @@ class FlightSqlStatement(
     }
 
     override fun execute(p0: String?, p1: Int): Boolean {
-        log.info("execute")
+        log.info("execute($p0, $p1)")
         TODO("Implement execute2()")
     }
 
     override fun execute(p0: String?, p1: IntArray?): Boolean {
-        log.info("execute")
+        log.info("execute($p0, $p1)")
         TODO("Implement execute3()")
     }
 
     override fun execute(p0: String?, p1: Array<out String>?): Boolean {
-        log.info("execute")
+        log.info("execute($p0, $p1)")
         TODO("Implement execute4()")
     }
 
-    override fun getResultSet(): ResultSet {
+    override fun getResultSet(): ResultSet? {
         log.info("getResultSet")
         return FlightSqlResultSet(vals)
     }

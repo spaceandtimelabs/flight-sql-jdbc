@@ -77,12 +77,12 @@ class FlightSqlResultSetMetaData : ResultSetMetaData {
     }
 
     override fun getColumnType(colIdx: Int): Int {
-        log.info("getColumnType")
+        log.info("getColumnType($colIdx)")
         return Types.VARCHAR
     }
 
     override fun getColumnTypeName(colIdx: Int): String {
-        log.info("getColumnTypeName")
+        log.info("getColumnTypeName($colIdx)")
         return "VARCHAR"
     }
 
@@ -99,7 +99,7 @@ class FlightSqlResultSetMetaData : ResultSetMetaData {
     }
 
     override fun getColumnClassName(p0: Int): String {
-        log.info("getColumnClassName")
+        log.info("getColumnClassName($p0)")
         return "java.lang.String"
     }
 }

@@ -133,7 +133,7 @@ class FlightSqlConnection(
     }
 
     override fun setReadOnly(p0: Boolean) {
-        log.info("setReadOnly")
+        log.info("setReadOnly($p0)")
         TODO("Implement setReadOnly()")
     }
 
@@ -228,28 +228,26 @@ class FlightSqlConnection(
     }
 
     override fun isValid(p0: Int): Boolean {
-        log.info("isValid")
+        log.info("isValid($p0)")
         TODO("Implement isValid()")
     }
 
     override fun setClientInfo(p0: String?, p1: String?) {
-        log.info("setClientInfo")
-        TODO("Implement setClientInfo()")
+        log.info("setClientInfo($p0, $p1)")
     }
 
     override fun setClientInfo(p0: Properties?) {
-        log.info("setClientInfo")
-        TODO("Implement setClientInfo()")
+        log.info("setClientInfo($p0)")
     }
 
-    override fun getClientInfo(p0: String?): String {
-        log.info("getClientInfo")
-        TODO("Implement getClientInfo()")
+    override fun getClientInfo(key: String?): String {
+        log.info("getClientInfo($key)")
+        return ""
     }
 
     override fun getClientInfo(): Properties {
-        log.info("getClientInfo")
-        TODO("Implement getClientInfo()")
+        log.info("getClientInfo()")
+        return PropertiesSpy()
     }
 
     override fun createArrayOf(p0: String?, p1: Array<out Any>?): java.sql.Array {
